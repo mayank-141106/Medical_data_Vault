@@ -76,3 +76,13 @@ The Medical Data Vault is a decentralized application (dApp) designed to securel
 
 - **Error Handling:**
   - Ensuring robust error handling for file uploads, AI analysis, and blockchain transactions was complex.
+---
+## 👥 Team
+
+This project was developed collaboratively by:
+
+- **Mayank Lande**
+- **Ankit Kumar**
+- **Anirudh Karanam**
+
+---
