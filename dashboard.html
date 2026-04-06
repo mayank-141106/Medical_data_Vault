@@ -1,0 +1,320 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/pdfjs-dist@2.10.377/build/pdf.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+            background-image: url('https://burst.shopifycdn.com/photos/medical-doctors-desk.jpg?width=1000&format=pjpg&exif=0&iptc=0');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #fff;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: -1;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1e1e2f;
+            padding: 15px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .top-bar .logo {
+            display: flex;
+            align-items: center;
+            color: #fff;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .top-bar .logo img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .logout-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logout-btn {
+            background: #ff4d4d;
+            color: #fff;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(255, 77, 77, 0.2);
+        }
+
+        .logout-btn:hover {
+            background: #ff6666;
+            transform: scale(1.05);
+        }
+
+        .logout-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 1000px;
+            max-width: 100%;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            padding: 40px;
+            width: 48%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+            color: #2a5298;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px;
+            border: 1px solid #1c1616;
+            border-radius: 12px;
+            font-size: 18px;
+            margin-bottom: 20px;
+            background: #f9f9f9;
+            transition: border 0.3s ease;
+        }
+        input:focus {
+            border-color: #2a5298;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            border: none;
+            color: white;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn:hover {
+            background: linear-gradient(135deg, #2a5298, #1e3c72);
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #2a5298;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 1.2em;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Data Display */
+        #data-display {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #data-display p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #2a5298;
+        }
+
+        #data-display p span {
+            color: #000000;
+            font-weight: 500;
+        }
+
+        #data-display a {
+            color: #2a5298;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        #data-display a:hover {
+            text-decoration: underline;
+        }
+
+        /* AI Insights Section */
+        #ai-insights {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: #2a5298;
+            display: none; /* Hidden by default */
+        }
+
+        #ai-insights h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        #ai-insights p {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        /* New styles for font color changes */
+        input[type="file"] {
+            color: #2a5298;
+        }
+        #data-display {
+            color: hsl(31, 90%, 58%);
+        }
+        #data-display a {
+            color: #c221f8;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/387/387561.png" alt="Stethoscope">
+            <span>Medical Data Vault</span>
+        </div>
+        <div class="logout-container">
+            <button class="logout-btn">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828479.png" alt="Exit">
+                Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="card">
+            <h2>Upload Medical Data</h2>
+            <input type="text" id="patient-id-upload" placeholder="Enter Patient ID">
+            <input type="file" id="file-input" accept=".pdf">
+            <button id="upload-btn" class="btn">Upload to IPFS</button>
+        </div>
+
+        <div class="card">
+            <h2>Retrieve Medical Data</h2>
+            <input type="text" id="patient-id-retrieve" placeholder="Enter Patient ID">
+            <button id="retrieve-btn" class="btn">Retrieve Data</button>
+
+            <div id="data-display"></div>
+
+            <!-- AI Insights Section -->
+            <div id="ai-insights">
+                <h3>AI Insights</h3>
+                <p id="ai-summary">No insights generated yet.</p>
+                <button id="ai-insights-btn" class="btn" style="margin-top: 10px;">Get AI Insights</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loader"></div>
+        <div class="loading-text">Processing...</div>
+    </div>
+
+    <script src="dashboard.js" type="module"></script>
+</body>
+</html>

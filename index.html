@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online MediCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+    <script src="login.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.6/dist/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.6.1/dist/web3.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-image: url('https://akm-img-a-in.tosshub.com/indiatoday/images/story/202410/close-up-of-stethoscope-on-desk-in-clinic-212842397-16x9_0.jpg?VersionId=E6AwYUnSI9vRZ0m41_d0P.x8dhOnMVAe&size=690:388');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Add some subtle animations */
+        .animate-fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Hover effects for the button */
+        #login-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        /* Add a little bounce to the image */
+        .hover-img:hover {
+            transform: scale(1.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* Animation for the header */
+        h1 {
+            animation: textBounce 1.5s ease-in-out infinite;
+        }
+
+        @keyframes textBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen font-poppins">
+    <div class="bg-white bg-opacity-90 shadow-2xl rounded-2xl w-full max-w-lg p-8 text-center animate-fade-in">
+        <h1 class="text-4xl font-bold text-gray-800">Online MediCare</h1>
+        <p class="text-gray-500 mt-2">Secure doctor-patient interactions powered by Blockchain</p>
+        <div class="flex flex-col items-center mt-6">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT92XTQF7FQOTVxIMZscOtvdWq3h8sbunR-Gg&s" alt="Medical Icon" class="w-32 h-32 mb-4 rounded-full shadow-lg object-cover hover-img">
+            <h2 class="text-2xl font-semibold text-gray-700">Connect Securely</h2>
+            <button id="login-btn" class="mt-4 w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white py-2 rounded-lg shadow-md hover:from-indigo-500 hover:to-blue-500 transition-all duration-300">Connect with MetaMask</button>
+        </div>
+    </div>
+</body>
+</html>
